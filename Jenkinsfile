@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    tools {
+        nodejs 'Node26' // Debe coincidir exactamente con el nombre que le pusiste en las herramientas
+    }
+
     stages {
         stage('Instalar Dependencias') {
             steps {
