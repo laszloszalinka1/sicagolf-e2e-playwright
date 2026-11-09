@@ -16,7 +16,8 @@ pipeline {
     steps {
         sh 'npx playwright test --project=chromium'
     }
-}
+       }
+    }
 
     post {
         always {
