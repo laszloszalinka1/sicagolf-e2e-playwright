@@ -14,7 +14,7 @@ test.describe('Flujo de ingreso de caddie', () => {
         await login.login(vigilanteUser.email, vigilanteUser.password);
         await expect(page).toHaveURL(/dashboard/);
         sidebar = new SideBar(page);
-        sidebar.goToPage(['Ingresar Caddie']);
+        await sidebar.goToPage(['Ingresar Caddie']);
         vigilante = new VigilantePage(page);
     });
     test('ingresar un caddie al sistema', async ({ page }) => {
@@ -22,7 +22,7 @@ test.describe('Flujo de ingreso de caddie', () => {
         const alert = page.locator('.alert');
         await expect(alert).toBeVisible();
 
-        await expect(alert).toHaveText('Ingreso registrado correctamente');
+        await expect(alert).toHaveText('🎉Ingreso registrado correctamente');
     })
     const invalidCaddies = [
         { type: 'inexistente', data: caddie.inexistente },
@@ -32,11 +32,11 @@ test.describe('Flujo de ingreso de caddie', () => {
         { type: 'otroRol', data: caddie.otroRol },
     ];
     const expectedMessages: Record<string, string> = {
-        inexistente: 'Documento no registarado en el sistema',
-        retirado: 'El caddie no puede ingresar porque está en estado RETIRADO',
-        suspendido: 'El caddie no puede ingresar porque está en estado SUSPENDIDO',
-        inactivo: 'El caddie no puede ingresar porque está en estado INACTIVO',
-        otroRol: 'El usuario no es un caddie y no puede registrar ingreso',
+        inexistente: '⚠️Documento no registrado en el sistema',
+        retirado: '⚠️El caddie no puede ingresar porque está en estado RETIRADO',
+        suspendido: '⚠️El caddie no puede ingresar porque está en estado SUSPENDIDO',
+        inactivo: '⚠️El caddie no puede ingresar porque está en estado INACTIVO',
+        otroRol: '⚠️El usuario no es un caddie y no puede registrar ingreso',
     };
 
     for (const caddieCase of invalidCaddies) {
@@ -49,21 +49,30 @@ test.describe('Flujo de ingreso de caddie', () => {
             await expect(alert).toHaveText(expectedMessages[caddieCase.type]);
         });
     }
-    test.afterAll(async ({ browser }) => {
-        // Crear un nuevo contexto/página para hacer la limpieza si hace falta
-        const context = await browser.newContext();
-        const page = await context.newPage();
+//     test.afterAll(async ({ request }) => {
+//   // 1. Autenticarse para obtener el Bearer Token
+//   const loginResponse = await request.post('http://localhost:3000/auth/login', {
+//     data: {
+//       correo: vigilanteUser.email,
+//       password: vigilanteUser.password,
+//     },
+//   });
 
-        const loginPage = new LoginPage(page);
-        await loginPage.goTo();
-        await loginPage.login(vigilanteUser.email, vigilanteUser.password);
+//   expect(loginResponse.ok(), 'Fallo la autenticación API en afterAll').toBeTruthy();
+  
+//   const body = await loginResponse.json();
+//   const token =  body.access_token; // Ajusta según la propiedad que retorne tu API
 
-        const sidebar = new SideBar(page);
-        sidebar.goToPage(['Retirar Caddie']);
+//   // 2. Retirar el caddie usando el token capturado
+//   const retirarResponse = await request.post('http://localhost:3000/vigilante/retirar', {
+//     headers: {
+//       Authorization: `Bearer ${token}`,
+//     },
+//     data: {
+//       documento: caddie.activo,
+//     },
+//   });
 
-        const vigilante = new VigilantePage(page);
-        await vigilante.retirarCaddie(caddie.activo);
-
-        await context.close();
-    });
+//   expect(retirarResponse.ok(), 'No se pudo retirar el caddie por API').toBeTruthy();
+// });
 });

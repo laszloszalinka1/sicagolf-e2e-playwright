@@ -6,7 +6,7 @@ export class SideBar {
     }
     async goToPage(ruta: string[]) {
         for (const opcion of ruta) {
-            await this.page.getByText(opcion).click();
+           await this.page.getByText(opcion).click();
         }
         
     }
