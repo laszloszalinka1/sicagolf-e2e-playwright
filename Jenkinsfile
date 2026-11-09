@@ -21,6 +21,12 @@ pipeline {
                 sh 'npx playwright test'
             }
         }
+        stage('Instalar Navegadores de Playwright') {
+            steps {
+            // Forzamos la instalación limpia y evitamos que se quede colgado en el stream
+            sh 'npx playwright install chromium'
+    }
+}
     }
 
     post {
