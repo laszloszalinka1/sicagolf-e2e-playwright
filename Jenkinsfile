@@ -12,21 +12,17 @@ pipeline {
             }
         }
         stage('Instalar Navegadores de Playwright') {
-            steps {
-                sh 'npx playwright install'
-            }
+             steps {
+            // Forzamos la instalación limpia y evitamos que se quede colgado en el stream
+            sh 'npx playwright install chromium'
+    }
         }
         stage('Ejecutar Pruebas') {
             steps {
                 sh 'npx playwright test'
             }
         }
-        stage('Instalar Navegadores de Playwright') {
-            steps {
-            // Forzamos la instalación limpia y evitamos que se quede colgado en el stream
-            sh 'npx playwright install chromium'
-    }
-}
+       
     }
 
     post {
