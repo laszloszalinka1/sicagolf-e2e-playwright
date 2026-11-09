@@ -13,7 +13,7 @@ pipeline {
         }
         stage('Instalar Navegadores de Playwright') {
             steps {
-                sh 'npx playwright install --with-deps'
+                sh 'npx playwright install'
             }
         }
         stage('Ejecutar Pruebas') {
