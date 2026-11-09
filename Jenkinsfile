@@ -12,13 +12,11 @@ pipeline {
             }
         }
         
-        stage('Ejecutar Pruebas') {
-            steps {
-                sh 'npx playwright test'
-            }
-        }
-       
+       stage('Ejecutar Pruebas') {
+    steps {
+        sh 'npx playwright test --project=chromium'
     }
+}
 
     post {
         always {
