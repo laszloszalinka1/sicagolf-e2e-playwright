@@ -2,21 +2,26 @@ pipeline {
     agent any
 
     tools {
-        nodejs 'Node26'
+        nodejs 'Node22' // Actualizado a Node 22 para evitar problemas de compatibilidad
     }
 
     stages {
+        stage('Corregir Permisos y Limpiar Caché') {
+            steps {
+                // Limpiamos la basura y los permisos de root anteriores
+                sh 'chown -R jenkins:jenkins /var/jenkins_home/.cache || true'
+                sh 'rm -rf /var/jenkins_home/.cache/ms-playwright/*'
+            }
+        }
+
         stage('Instalar Dependencias') {
             steps {
                 sh 'npm ci'
             }
         }
         
-        stage('Limpiar Bloqueos e Instalar Navegador') {
+        stage('Instalar Navegador Playwright') {
             steps {
-                // Elimina el archivo de bloqueo si quedó colgado de un intento previo
-                sh 'rm -rf /var/jenkins_home/.cache/ms-playwright/__dirlock'
-                // Instala el headless shell de forma limpia
                 sh 'npx playwright install chromium-headless-shell'
             }
         }
