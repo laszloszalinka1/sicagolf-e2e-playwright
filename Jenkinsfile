@@ -12,8 +12,11 @@ pipeline {
             }
         }
         
-        stage('Instalar Navegador Playwright') {
+        stage('Limpiar Bloqueos e Instalar Navegador') {
             steps {
+                // Elimina el archivo de bloqueo si quedó colgado de un intento previo
+                sh 'rm -rf /var/jenkins_home/.cache/ms-playwright/__dirlock'
+                // Instala el headless shell de forma limpia
                 sh 'npx playwright install chromium-headless-shell'
             }
         }
