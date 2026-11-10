@@ -1,15 +1,27 @@
 pipeline {
-    agent {
-        docker {
-            image 'mcr.microsoft.com/playwright:v1.48.0-noble'
-            args '--user root' // Esto asegura que corra con permisos totales si necesita escribir en cachés
-        }
+    agent any
+
+    tools {
+        nodejs 'Node22'
     }
 
     stages {
+        stage('Corregir Permisos y Limpiar Caché') {
+            steps {
+                sh 'chown -R jenkins:jenkins /var/jenkins_home/.cache || true'
+                sh 'rm -rf /var/jenkins_home/.cache/ms-playwright/chromium_headless_shell-1200 /var/jenkins_home/.cache/ms-playwright/ffmpeg-1011'
+            }
+        }
+
         stage('Instalar Dependencias') {
             steps {
                 sh 'npm ci'
+            }
+        }
+        
+        stage('Instalar Navegador Playwright') {
+            steps {
+                sh 'npx playwright install chromium-headless-shell'
             }
         }
         
