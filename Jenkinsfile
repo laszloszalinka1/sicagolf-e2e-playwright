@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        nodejs 'Node26' // Debe coincidir exactamente con el nombre que le pusiste en las herramientas
+        nodejs 'Node26'
     }
 
     stages {
@@ -12,11 +12,17 @@ pipeline {
             }
         }
         
-       stage('Ejecutar Pruebas') {
-    steps {
-        sh 'npx playwright test --project=chromium'
-    }
-       }
+        stage('Instalar Navegador Playwright') {
+            steps {
+                sh 'npx playwright install chromium-headless-shell'
+            }
+        }
+        
+        stage('Ejecutar Pruebas') {
+            steps {
+                sh 'npx playwright test --project=chromium'
+            }
+        }
     }
 
     post {
