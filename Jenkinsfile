@@ -6,10 +6,10 @@ pipeline {
     }
 
     stages {
-        stage('Corregir Permisos y Limpiar Caché') {
+        stage('Verificar Caché y Permisos') {
             steps {
                 sh 'chown -R jenkins:jenkins /var/jenkins_home/.cache || true'
-                sh 'rm -rf /var/jenkins_home/.cache/ms-playwright/chromium_headless_shell-1200 /var/jenkins_home/.cache/ms-playwright/ffmpeg-1011'
+                // Ya no borramos el navegador para evitar descargas innecesarias que gastan datos
             }
         }
 
@@ -19,9 +19,10 @@ pipeline {
             }
         }
         
-        stage('Instalar Navegador Playwright') {
+        stage('Asegurar Navegador Playwright') {
             steps {
-                sh 'npx playwright install chromium-headless-shell'
+                // Playwright validará si ya existe; si está en caché, no descargará nada nuevo
+                sh 'npx playwright install --with-deps chromium-headless-shell'
             }
         }
         
