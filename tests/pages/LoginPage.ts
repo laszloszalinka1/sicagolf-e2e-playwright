@@ -12,7 +12,7 @@ export class LoginPage {
     };
 
     async goTo() {
-        await this.page.goto('http://localhost:5173/login');
+        await this.page.goto('/login');
     }
     async login(email: string, password: string) {
         await this.emailInput.fill(email);
