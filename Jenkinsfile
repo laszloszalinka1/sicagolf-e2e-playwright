@@ -6,22 +6,15 @@ pipeline {
     }
 
     stages {
-        stage('Verificar Caché y Permisos') {
-            steps {
-                sh 'chown -R jenkins:jenkins /var/jenkins_home/.cache || true'
-                // Ya no borramos el navegador para evitar descargas innecesarias que gastan datos
-            }
-        }
-
         stage('Instalar Dependencias') {
             steps {
                 sh 'npm ci'
             }
         }
         
-        stage('Asegurar Navegador Playwright') {
+        stage('Instalar Navegador y Dependencias del Sistema') {
             steps {
-                // Playwright validará si ya existe; si está en caché, no descargará nada nuevo
+                // El parámetro --with-deps descarga automáticamente las librerías faltantes como libglib-2.0
                 sh 'npx playwright install --with-deps chromium-headless-shell'
             }
         }
