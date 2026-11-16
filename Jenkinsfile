@@ -1,34 +1,26 @@
 pipeline {
     agent any
 
-    tools {
-        nodejs 'Node22'
-    }
-
     stages {
-        stage('Instalar Dependencias') {
+        stage('Preparar Entorno y Ejecutar Pruebas E2E') {
             steps {
-                sh 'npm ci'
-            }
-        }
-        
-        stage('Instalar Navegador Playwright') {
-            steps {
-                // Instalamos solo el navegador sin intentar modificar el sistema operativo (--with-deps)
-                sh 'npx playwright install chromium-headless-shell'
-            }
-        }
-        
-        stage('Ejecutar Pruebas') {
-            steps {
-                sh 'npx playwright test --project=chromium'
+                script {
+                    try {
+                        // Levanta db, backend, frontend y corre playwright en la misma red
+                        sh 'docker compose up --build --exit-code-from playwright-tests'
+                    } finally {
+                        // Limpia los contenedores al terminar (incluso si falla algún test)
+                        sh 'docker compose down -v'
+                    }
+                }
             }
         }
     }
 
     post {
         always {
-            archiveArtifacts artifacts: 'playwright-report/**', allowEmptyArchive: true
+            // Publica los reportes o trazas generados en el workspace
+            archiveArtifacts artifacts: 'playwright-report/**, test-results/**', allowEmptyArchive: true
         }
     }
 }
